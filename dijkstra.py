@@ -11,12 +11,25 @@ class ShortestPath:
     def __repr__(self):
         return f"<Shortest Path: {'->'.join([str(x) for x in self.path])} -- Distance: {self.distance}>"
 
+    def get_named_path_result(self, id_map):
+        self.path = [id_map[x] for x in self.path.copy()]
+        return self
+
 
 class Dijkstra:
     def __init__(self, graph: Graph):
         self.number_of_vertices = graph.number_of_vertices
         self.edges = graph.adjacency_matrix
+        self.key_map = graph.key_map
+        self.id_map = graph.id_map
         self.result_dict = dict()
+
+    def get_shortest_path_by_name(self, start_vertex, end_vertex) -> ShortestPath:
+        if start_vertex in self.key_map and end_vertex in self.key_map:
+            result = self.get_shortest_path(self.key_map[start_vertex], self.key_map[end_vertex])
+            return result.get_named_path_result(self.id_map)
+        else:
+            raise ValueError(f'{start_vertex} or {end_vertex} is not a valid vertex name!')
 
     def get_shortest_path(self, start_vertex, end_vertex) -> ShortestPath:
         if start_vertex in self.result_dict:

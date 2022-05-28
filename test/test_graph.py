@@ -1,9 +1,19 @@
 import unittest
+from os import path
 
 from graph import Graph
 
 
 class TestGraph(unittest.TestCase):
+    def test_should_initiate_graph_from_named_nodes_file_successfully(self):
+        g = Graph.from_named_nodes_csv(path.join('test_resources', 'named_nodes_graph.csv'), directed=False)
+        self.assertEqual(6, g.get_distance_by_name('C', 'D'))
+        self.assertEqual(10, g.get_distance_by_name('E', 'D'))
+
+    def test_should_initiate_graph_from_file_successfully(self):
+        g = Graph.from_csv(number_of_vertices=9, file_path=path.join('test_resources', 'graph.csv'), directed=False)
+        self.assertEqual(12, g.adjacency_matrix[5][8])
+
     def test_should_create_adjacency_matrix_of_the_give_size(self):
         g = Graph(4)
         self.assertEqual(4, len(g.adjacency_matrix))

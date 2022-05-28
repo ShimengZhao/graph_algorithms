@@ -1,4 +1,5 @@
 import unittest
+from os import path
 
 from dijkstra import Dijkstra
 from graph import Graph
@@ -24,8 +25,10 @@ class TestDijkstra(unittest.TestCase):
             (6, 7, 1),
             (7, 8, 3),
         ]
-        for t in edge_list:
-            self.graph.add_edge(t)
+        self.graph.add_edges(edge_list)
+
+        self.named_graph = Graph.from_named_nodes_csv(path.join('test_resources', 'named_nodes_graph.csv'),
+                                                      directed=False)
 
     def test_should_calculate_one_shortest_path_correctly(self):
         dk = Dijkstra(self.graph)
@@ -54,6 +57,18 @@ class TestDijkstra(unittest.TestCase):
         result_2 = dk.get_shortest_path(0, 5)
         self.assertEqual(24, result_2.distance)
         self.assertSequenceEqual([0, 1, 2, 3, 5], result_2.path)
+
+    def test_should_calculate_shortest_path_by_node_name_correctly(self):
+        dk = Dijkstra(self.named_graph)
+
+        result = dk.get_shortest_path_by_name('C', 'I')
+        self.assertEqual(6, result.distance)
+        self.assertSequenceEqual(['C', 'E', 'H', 'I'], result.path)
+
+    def test_should_raise_error_when_vertex_name_is_in_valid(self):
+        dk = Dijkstra(self.named_graph)
+        with self.assertRaises(ValueError):
+            dk.get_shortest_path_by_name('C', 'Z')
 
 
 if __name__ == '__main__':
